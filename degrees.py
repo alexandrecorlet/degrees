@@ -92,10 +92,41 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    # TODO
-    raise NotImplementedError
+    if source == target:
+        return []
+    
+    start = Node(state=source, parent=None, action=None)
+    frontier = QueueFrontier()
+    explored = set()
+
+    frontier.add(start)
+    while not frontier.empty():
+        current_node = frontier.remove()
+        explored.add(current_node.state)
+
+        for movie_id, neighbor_id in neighbors_for_person(current_node.state):
+            node = Node(
+                state=neighbor_id, 
+                parent=current_node, 
+                action=movie_id
+            )
+            if neighbor_id == target:
+                return get_path(node)
+            if neighbor_id not in explored:
+                frontier.add(node)
 
 
+def get_path(node):
+    """
+    Returns the path between source node and the given node.
+    """
+    path = []
+    while node.parent is not None:
+        path.append((node.action, node.state))
+        node = node.parent
+    return path[::-1]
+
+        
 def person_id_for_name(name):
     """
     Returns the IMDB id for a person's name,
